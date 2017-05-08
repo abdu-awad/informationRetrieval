@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Database4Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Docs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="link" Type="varchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="index">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="term_ID" Type="int" Nullable="false" />
+    <Property Name="Doc_ID" Type="int" Nullable="false" />
+    <Property Name="Doc_Freq" Type="int" Nullable="false" />
+    <Property Name="weight" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Terms">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="term" Type="varchar" MaxLength="25" Nullable="false" />
+    <Property Name="numberOfDocuments" Type="int" Nullable="false" />
+    <Property Name="totalFreq" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK__index__Doc_ID__3A81B327">
+    <End Role="Docs" Type="Self.Docs" Multiplicity="1" />
+    <End Role="index" Type="Self.index" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Docs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="index">
+        <PropertyRef Name="Doc_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__index__term_ID__3D5E1FD2">
+    <End Role="Terms" Type="Self.Terms" Multiplicity="1" />
+    <End Role="index" Type="Self.index" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Terms">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="index">
+        <PropertyRef Name="term_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Database4ModelStoreContainer">
+    <EntitySet Name="Docs" EntityType="Self.Docs" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="index" EntityType="Self.index" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Terms" EntityType="Self.Terms" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__index__Doc_ID__3A81B327" Association="Self.FK__index__Doc_ID__3A81B327">
+      <End Role="Docs" EntitySet="Docs" />
+      <End Role="index" EntitySet="index" />
+    </AssociationSet>
+    <AssociationSet Name="FK__index__term_ID__3D5E1FD2" Association="Self.FK__index__term_ID__3D5E1FD2">
+      <End Role="Terms" EntitySet="Terms" />
+      <End Role="index" EntitySet="index" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

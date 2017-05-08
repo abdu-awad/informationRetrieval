@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Database4ModelStoreContainer" CdmEntityContainer="Database4Entities">
+    <EntitySetMapping Name="Docs">
+      <EntityTypeMapping TypeName="Database4Model.Doc">
+        <MappingFragment StoreEntitySet="Docs">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="link" ColumnName="link" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="indices">
+      <EntityTypeMapping TypeName="Database4Model.index">
+        <MappingFragment StoreEntitySet="index">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Doc_Freq" ColumnName="Doc_Freq" />
+          <ScalarProperty Name="weight" ColumnName="weight" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Terms">
+      <EntityTypeMapping TypeName="Database4Model.Term">
+        <MappingFragment StoreEntitySet="Terms">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="term1" ColumnName="term" />
+          <ScalarProperty Name="numberOfDocuments" ColumnName="numberOfDocuments" />
+          <ScalarProperty Name="totalFreq" ColumnName="totalFreq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="FK__index__Doc_ID__286302EC" TypeName="Database4Model.FK__index__Doc_ID__286302EC" StoreEntitySet="index">
+      <EndProperty Name="Docs">
+        <ScalarProperty Name="Id" ColumnName="Doc_ID" />
+      </EndProperty>
+      <EndProperty Name="index">
+        <ScalarProperty Name="id" ColumnName="id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="FK__index__term_ID__276EDEB3" TypeName="Database4Model.FK__index__term_ID__276EDEB3" StoreEntitySet="index">
+      <EndProperty Name="Terms">
+        <ScalarProperty Name="id" ColumnName="term_ID" />
+      </EndProperty>
+      <EndProperty Name="index">
+        <ScalarProperty Name="id" ColumnName="id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping>

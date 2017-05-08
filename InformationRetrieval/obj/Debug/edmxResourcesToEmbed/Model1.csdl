@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Database4Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Doc">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="link" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="indices" Relationship="Self.FK__index__Doc_ID__286302EC" FromRole="Docs" ToRole="index" />
+  </EntityType>
+  <EntityType Name="index">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="Doc_Freq" Type="Int32" Nullable="false" />
+    <Property Name="weight" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Doc" Relationship="Self.FK__index__Doc_ID__286302EC" FromRole="index" ToRole="Docs" />
+    <NavigationProperty Name="Term" Relationship="Self.FK__index__term_ID__276EDEB3" FromRole="index" ToRole="Terms" />
+  </EntityType>
+  <EntityType Name="Term">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="term1" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="numberOfDocuments" Type="Int32" Nullable="false" />
+    <Property Name="totalFreq" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="indices" Relationship="Self.FK__index__term_ID__276EDEB3" FromRole="Terms" ToRole="index" />
+  </EntityType>
+  <Association Name="FK__index__Doc_ID__286302EC">
+    <End Role="Docs" Type="Self.Doc" Multiplicity="1" />
+    <End Role="index" Type="Self.index" Multiplicity="*" />
+  </Association>
+  <Association Name="FK__index__term_ID__276EDEB3">
+    <End Role="Terms" Type="Self.Term" Multiplicity="1" />
+    <End Role="index" Type="Self.index" Multiplicity="*" />
+  </Association>
+  <EntityContainer Name="Database4Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Docs" EntityType="Self.Doc" />
+    <EntitySet Name="indices" EntityType="Self.index" />
+    <EntitySet Name="Terms" EntityType="Self.Term" />
+    <AssociationSet Name="FK__index__Doc_ID__286302EC" Association="Self.FK__index__Doc_ID__286302EC">
+      <End Role="Docs" EntitySet="Docs" />
+      <End Role="index" EntitySet="indices" />
+    </AssociationSet>
+    <AssociationSet Name="FK__index__term_ID__276EDEB3" Association="Self.FK__index__term_ID__276EDEB3">
+      <End Role="Terms" EntitySet="Terms" />
+      <End Role="index" EntitySet="indices" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
