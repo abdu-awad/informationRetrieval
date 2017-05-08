@@ -1,2 +1,5 @@
 # informationRetrieval
-small search engine in english documents
+small search engine for english documents
+
+By: Abdullah Awad
+    Yazan Kassam
