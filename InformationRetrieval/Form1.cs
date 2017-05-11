@@ -111,8 +111,10 @@ namespace InformationRetrieval
                     cmd.CommandText = "select id from Docs where link='" + file + "'";
                     int id = Convert.ToInt32(cmd.ExecuteScalar().ToString());
                     cmd.Dispose();
-                    System.IO.StreamReader sr = new System.IO.StreamReader(file);
-                    LinkedList<string> w = new LinkedList<string>(Stopwords.RemoveStopwords(sr.ReadToEnd()));
+                    System.IO.StreamReader sr = new System.IO.StreamReader(file);                    
+                    LinkedList<string> beforeStem = new LinkedList<string>(Stopwords.RemoveStopwords(sr.ReadToEnd()));
+                    Stemming2 s = new Stemming2();
+                    LinkedList<string> w = s.porter2(beforeStem);
                     while (w.First != null)
                     {
                         try
