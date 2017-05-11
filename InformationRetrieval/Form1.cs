@@ -23,9 +23,11 @@ namespace InformationRetrieval
         }
         string target = System.IO.Directory.GetCurrentDirectory() + "\\Docs";
         Database4Entities dbe = new Database4Entities();
-        SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\abdua\Documents\Visual Studio 2015\Projects\InformationRetrieval\InformationRetrieval\bin\Debug\Database4.mdf;Integrated Security=True");
+        SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Database4.mdf;Integrated Security=True");
         SqlCommand cmd = new SqlCommand();
         SqlDataReader dr;
+        Dictionary<string, int> words = new Dictionary<string, int>();
+        
         
         
 
@@ -79,11 +81,7 @@ namespace InformationRetrieval
                 MessageBox.Show("your search is: " + textBox1.Text);
             }
         }
-
-       
-
-       
-
+        
         private void Search_Click(object sender, EventArgs e)
         {
             MessageBox.Show("your search is: " + textBox1.Text);
@@ -104,21 +102,39 @@ namespace InformationRetrieval
                 MessageBox.Show("there is no files in Docs directory");
             }
             else
-                foreach(string file in System.IO.Directory.GetFiles(target))
+            {
+                conn.Open();
+                foreach (string file in System.IO.Directory.GetFiles(target))
                 {
-                    conn.Open();
-                    cmd.CommandText = "select id from Docs where link='" + file + "'";
-                    string id = cmd.ExecuteScalar().ToString();
-                    cmd.Dispose();
-                    LinkedList<string> words = new LinkedList<string>(Stopwords.RemoveStopwords(file));
-                    while (words.First != null)
-                    {
-                        cmd.CommandText = "insert into Terms (term) value ('" + words.First.ToString() + "')";
 
+                    words.Clear();
+                    cmd.CommandText = "select id from Docs where link='" + file + "'";
+                    int id = Convert.ToInt32(cmd.ExecuteScalar().ToString());
+                    cmd.Dispose();
+                    System.IO.StreamReader sr = new System.IO.StreamReader(file);
+                    LinkedList<string> w = new LinkedList<string>(Stopwords.RemoveStopwords(sr.ReadToEnd()));
+                    while (w.First != null)
+                    {
+                        try
+                        {
+                            words.Add(w.First.Value, 1);
+
+                        }
+                        catch (Exception)
+                        {
+                            int max = 1;
+                            words.TryGetValue(w.First.Value, out max);
+                            words.Remove(w.First.Value);
+                            words.Add(w.First.Value, max + 1);
+                        }
+                        w.RemoveFirst();
                     }
 
-                    conn.Close();
+                    addTerms(words, id);
                 }
+                conn.Close();
+            }
+                
             MessageBox.Show("ok");
         }
 
@@ -134,6 +150,43 @@ namespace InformationRetrieval
                 conn.Close();                
             }
             MessageBox.Show("Done Deleting");
+        }
+
+        void addTerms(Dictionary<string,int> words,int id)
+        {
+            foreach(KeyValuePair<string,int> kvp in words)
+            {
+                cmd.CommandText = "select id from Terms where term = '" + kvp.Key + "'";
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+                    string termID = cmd.ExecuteScalar().ToString();
+                    cmd.Dispose();
+                    cmd.CommandText = "select numberOfDocuments from Terms where id = "+termID;
+                    int docNum = Convert.ToInt32(cmd.ExecuteScalar())+1;
+                    cmd.Dispose();
+                    cmd.CommandText = "select totalFreq from Terms where id = " + termID;
+                    int freq = Convert.ToInt32(cmd.ExecuteScalar())+kvp.Value;
+                    cmd.Dispose();
+                    cmd.CommandText = "update Terms set numberOfDocuments= " + docNum + " , totalFreq = " + freq + " where id = " + id;
+                    cmd.ExecuteNonQuery();
+                    cmd.Dispose();
+                    cmd.CommandText = "insert into index (term_id,doc_id,doc_freq) values ("+termID+","+id+","+kvp.Value+")";
+                    cmd.ExecuteNonQuery();
+                    cmd.Dispose();
+                }
+                else
+                {
+                    cmd.CommandText = "insert into Terms (term,numberOfDocuments,totalFreq) values ('" + kvp.Key + "'," + 1 + "," + kvp.Value + ")";
+                    cmd.ExecuteNonQuery();
+                    cmd.Dispose();
+                    cmd.CommandText = "select id from Terms where term = '" + kvp.Key + "'";
+                    string termID = cmd.ExecuteScalar().ToString();
+                    cmd.Dispose();
+                    cmd.CommandText = "insert into [Index] (term_ID,Doc_ID,Doc_Freq,weight) values (" + termID + "," + id + "," + kvp.Value + ","+0+")";
+                    cmd.ExecuteNonQuery();
+                    cmd.Dispose();
+                }
+            }
         }
     }
 }
