@@ -17,15 +17,15 @@ namespace InformationRetrieval
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Term()
         {
-            this.indices = new HashSet<index>();
+            this.Dics = new HashSet<Dic>();
         }
     
-        public int id { get; set; }
+        public int Id { get; set; }
         public string term1 { get; set; }
-        public int numberOfDocuments { get; set; }
-        public int totalFreq { get; set; }
+        public Nullable<int> DocNum { get; set; }
+        public Nullable<int> totFreq { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<index> indices { get; set; }
+        public virtual ICollection<Dic> Dics { get; set; }
     }
 }

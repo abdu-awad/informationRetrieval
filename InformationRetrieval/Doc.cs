@@ -17,13 +17,13 @@ namespace InformationRetrieval
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Doc()
         {
-            this.indices = new HashSet<index>();
+            this.Dics = new HashSet<Dic>();
         }
     
         public int Id { get; set; }
-        public string link { get; set; }
+        public string name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<index> indices { get; set; }
+        public virtual ICollection<Dic> Dics { get; set; }
     }
 }

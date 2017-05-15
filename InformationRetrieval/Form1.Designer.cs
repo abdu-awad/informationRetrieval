@@ -35,6 +35,7 @@
             this.Search = new System.Windows.Forms.Button();
             this.delete_files_button = new System.Windows.Forms.Button();
             this.Clear_index_button = new System.Windows.Forms.Button();
+            this.resultTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // addFiles_button
@@ -42,7 +43,7 @@
             this.addFiles_button.Location = new System.Drawing.Point(96, 135);
             this.addFiles_button.Name = "addFiles_button";
             this.addFiles_button.Size = new System.Drawing.Size(139, 52);
-            this.addFiles_button.TabIndex = 0;
+            this.addFiles_button.TabIndex = 5;
             this.addFiles_button.Text = "Add New Files";
             this.addFiles_button.UseVisualStyleBackColor = true;
             this.addFiles_button.Click += new System.EventHandler(this.addFiles_button_Click);
@@ -67,7 +68,7 @@
             this.index_button.Location = new System.Drawing.Point(96, 194);
             this.index_button.Name = "index_button";
             this.index_button.Size = new System.Drawing.Size(139, 52);
-            this.index_button.TabIndex = 2;
+            this.index_button.TabIndex = 6;
             this.index_button.Text = "Index";
             this.index_button.UseVisualStyleBackColor = true;
             this.index_button.Click += new System.EventHandler(this.index_button_Click);
@@ -77,7 +78,7 @@
             this.Search.Location = new System.Drawing.Point(368, 128);
             this.Search.Name = "Search";
             this.Search.Size = new System.Drawing.Size(154, 30);
-            this.Search.TabIndex = 5;
+            this.Search.TabIndex = 2;
             this.Search.Text = "Search";
             this.Search.UseVisualStyleBackColor = true;
             this.Search.Click += new System.EventHandler(this.Search_Click);
@@ -87,7 +88,7 @@
             this.delete_files_button.Location = new System.Drawing.Point(96, 79);
             this.delete_files_button.Name = "delete_files_button";
             this.delete_files_button.Size = new System.Drawing.Size(138, 48);
-            this.delete_files_button.TabIndex = 6;
+            this.delete_files_button.TabIndex = 4;
             this.delete_files_button.Text = "Delete All Files";
             this.delete_files_button.UseVisualStyleBackColor = true;
             this.delete_files_button.Click += new System.EventHandler(this.delete_files_button_Click);
@@ -101,11 +102,22 @@
             this.Clear_index_button.Text = "Clear Index";
             this.Clear_index_button.UseVisualStyleBackColor = true;
             // 
+            // resultTextBox
+            // 
+            this.resultTextBox.Location = new System.Drawing.Point(281, 184);
+            this.resultTextBox.Multiline = true;
+            this.resultTextBox.Name = "resultTextBox";
+            this.resultTextBox.ReadOnly = true;
+            this.resultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.resultTextBox.Size = new System.Drawing.Size(333, 185);
+            this.resultTextBox.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(662, 373);
+            this.Controls.Add(this.resultTextBox);
             this.Controls.Add(this.Clear_index_button);
             this.Controls.Add(this.delete_files_button);
             this.Controls.Add(this.Search);
@@ -128,6 +140,7 @@
         private System.Windows.Forms.Button Search;
         private System.Windows.Forms.Button delete_files_button;
         private System.Windows.Forms.Button Clear_index_button;
+        private System.Windows.Forms.TextBox resultTextBox;
     }
 }
 

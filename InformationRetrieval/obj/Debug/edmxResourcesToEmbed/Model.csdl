@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="IRDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Dic">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="termID" Type="Int32" />
+    <Property Name="docID" Type="Int32" />
+    <Property Name="freq" Type="Int32" />
+    <Property Name="weight" Type="Int32" />
+    <NavigationProperty Name="Doc" Relationship="Self.FK__Dic__docID__286302EC" FromRole="Dic" ToRole="Docs" />
+    <NavigationProperty Name="Term" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Dic" ToRole="Terms" />
+  </EntityType>
+  <EntityType Name="Doc">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Dics" Relationship="Self.FK__Dic__docID__286302EC" FromRole="Docs" ToRole="Dic" />
+  </EntityType>
+  <EntityType Name="Term">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="term1" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="DocNum" Type="Int32" />
+    <Property Name="totFreq" Type="Int32" />
+    <NavigationProperty Name="Dics" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Terms" ToRole="Dic" />
+  </EntityType>
+  <Association Name="FK__Dic__docID__286302EC">
+    <End Role="Docs" Type="Self.Doc" Multiplicity="0..1" />
+    <End Role="Dic" Type="Self.Dic" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Docs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Dic">
+        <PropertyRef Name="docID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Dic__termID__276EDEB3">
+    <End Role="Terms" Type="Self.Term" Multiplicity="0..1" />
+    <End Role="Dic" Type="Self.Dic" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Terms">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Dic">
+        <PropertyRef Name="termID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="IRDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Dics" EntityType="Self.Dic" />
+    <EntitySet Name="Docs" EntityType="Self.Doc" />
+    <EntitySet Name="Terms" EntityType="Self.Term" />
+    <AssociationSet Name="FK__Dic__docID__286302EC" Association="Self.FK__Dic__docID__286302EC">
+      <End Role="Docs" EntitySet="Docs" />
+      <End Role="Dic" EntitySet="Dics" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Dic__termID__276EDEB3" Association="Self.FK__Dic__termID__276EDEB3">
+      <End Role="Terms" EntitySet="Terms" />
+      <End Role="Dic" EntitySet="Dics" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

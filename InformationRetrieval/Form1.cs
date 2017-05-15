@@ -19,16 +19,13 @@ namespace InformationRetrieval
            
             addFiles_dialog.Multiselect = true;
             addFiles_dialog.Filter = "text files (*.txt)|*.txt|word files (*.doc,*.docx)|*.doc,*.docx|All files (*.*)|*.*";
-            cmd.Connection = conn;
+            //IRDBE.Database.Connection.Open();
         }
+
+
         string target = System.IO.Directory.GetCurrentDirectory() + "\\Docs";
-        Database4Entities dbe = new Database4Entities();
-        SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Database4.mdf;Integrated Security=True");
-        SqlCommand cmd = new SqlCommand();
-        SqlDataReader dr;
+        IRDBEntities IRDBE = new IRDBEntities();        
         Dictionary<string, int> words = new Dictionary<string, int>();
-        
-        
         
 
         private void addFiles_button_Click(object sender, EventArgs e)
@@ -43,25 +40,18 @@ namespace InformationRetrieval
                 }
                 foreach(string s in addFiles_dialog.FileNames)
                 {
-                    bool exist = true;
-                    System.IO.File.Copy(s, target+"\\"+System.IO.Path.GetFileName(s), true);
-                    conn.Open();
-                    cmd.CommandText = "select id from Docs where link = '" + target + "\\" + System.IO.Path.GetFileName(s) + "'";
-                    try
+                    string fileName = System.IO.Path.GetFileName(s);
+                    var result = (from q in IRDBE.Docs where q.name == fileName select q).FirstOrDefault<Doc>();
+                    
+                    if (result == null)
                     {
-                        cmd.ExecuteScalar().ToString();
+                        System.IO.File.Copy(s, target + "\\" + System.IO.Path.GetFileName(s), true);
+                        IRDBE.Docs.Add(new Doc() { name = System.IO.Path.GetFileName(s) });
+                        IRDBE.SaveChanges();
                     }
-                    catch (System.NullReferenceException)
-                    {
-                        cmd.CommandText = "insert into Docs (link) values ('" + target + "\\" + System.IO.Path.GetFileName(s) + "')";
-                        cmd.ExecuteNonQuery();
-                        exist = false;
-                    }
-                    if (exist)
-                    {
+                    else
                         MessageBox.Show("document already exists");
-                    }
-                    conn.Close();
+                   
                 }
                 MessageBox.Show("Done Adding!");
             }
@@ -85,12 +75,29 @@ namespace InformationRetrieval
         private void Search_Click(object sender, EventArgs e)
         {
             MessageBox.Show("your search is: " + textBox1.Text);
+            processQuery(textBox1.Text);
         }
 
         private void index_button_Click(object sender, EventArgs e)
         {
             createIndex();
         }
+
+        private void delete_files_button_Click(object sender, EventArgs e)
+        {
+            var DocList = IRDBE.Docs.ToList<Doc>();
+            int j = 0;
+            while (j<DocList.Count)
+            {
+                System.IO.File.Delete(target+"\\"+DocList.ElementAt<Doc>(j).name);
+                IRDBE.Docs.Remove(DocList.ElementAt<Doc>(j));
+                j++;
+                IRDBE.SaveChanges();
+            }
+            
+            MessageBox.Show("Done Deleting");
+        }
+
         void createIndex()
         {
             if (!System.IO.Directory.Exists(target))
@@ -103,15 +110,13 @@ namespace InformationRetrieval
             }
             else
             {
-                conn.Open();
+                
                 foreach (string file in System.IO.Directory.GetFiles(target))
                 {
-
+                    string fileName = System.IO.Path.GetFileName(file);
                     words.Clear();
-                    cmd.CommandText = "select id from Docs where link='" + file + "'";
-                    int id = Convert.ToInt32(cmd.ExecuteScalar().ToString());
-                    cmd.Dispose();
-                    System.IO.StreamReader sr = new System.IO.StreamReader(file);                    
+                    var document = (from q in IRDBE.Docs where q.name == fileName select q).FirstOrDefault();
+                    System.IO.StreamReader sr = new System.IO.StreamReader(file);
                     LinkedList<string> beforeStem = new LinkedList<string>(Stopwords.RemoveStopwords(sr.ReadToEnd()));
                     Stemming2 s = new Stemming2();
                     LinkedList<string> w = s.porter2(beforeStem);
@@ -131,63 +136,45 @@ namespace InformationRetrieval
                         }
                         w.RemoveFirst();
                     }
-
-                    addTerms(words, id);
-                }
-                conn.Close();
+                    addTerms(words,Convert.ToInt32(document.Id));
+                }                
             }
-                
+
             MessageBox.Show("ok");
         }
 
-        private void delete_files_button_Click(object sender, EventArgs e)
-        {
-            foreach(string file in System.IO.Directory.GetFiles(target))
-            {
-                System.IO.File.Delete(file);                
-                conn.Open();
-                cmd.CommandText = "delete from Docs where link='" + file + "'";
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-                conn.Close();                
-            }
-            MessageBox.Show("Done Deleting");
-        }
 
         void addTerms(Dictionary<string,int> words,int id)
         {
             foreach(KeyValuePair<string,int> kvp in words)
             {
-                cmd.CommandText = "select id from Terms where term = '" + kvp.Key + "'";
-                if (cmd.ExecuteNonQuery() > 0)
+                var term = (from q in IRDBE.Terms where q.term1 ==kvp.Key select q).FirstOrDefault();
+                
+                if (term != null)
                 {
-                    string termID = cmd.ExecuteScalar().ToString();
-                    cmd.Dispose();
-                    cmd.CommandText = "select numberOfDocuments from Terms where id = "+termID;
-                    int docNum = Convert.ToInt32(cmd.ExecuteScalar())+1;
-                    cmd.Dispose();
-                    cmd.CommandText = "select totalFreq from Terms where id = " + termID;
-                    int freq = Convert.ToInt32(cmd.ExecuteScalar())+kvp.Value;
-                    cmd.Dispose();
-                    cmd.CommandText = "update Terms set numberOfDocuments= " + docNum + " , totalFreq = " + freq + " where id = " + id;
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    cmd.CommandText = "insert into index (term_id,doc_id,doc_freq) values ("+termID+","+id+","+kvp.Value+")";
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
+                    term.DocNum++;
+                    term.totFreq += kvp.Value;
                 }
                 else
                 {
-                    cmd.CommandText = "insert into Terms (term,numberOfDocuments,totalFreq) values ('" + kvp.Key + "'," + 1 + "," + kvp.Value + ")";
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
-                    cmd.CommandText = "select id from Terms where term = '" + kvp.Key + "'";
-                    string termID = cmd.ExecuteScalar().ToString();
-                    cmd.Dispose();
-                    cmd.CommandText = "insert into [Index] (term_ID,Doc_ID,Doc_Freq,weight) values (" + termID + "," + id + "," + kvp.Value + ","+0+")";
-                    cmd.ExecuteNonQuery();
-                    cmd.Dispose();
+                    IRDBE.Terms.Add(new Term() { term1 = kvp.Key, DocNum = 1, totFreq = kvp.Value });
+                    IRDBE.SaveChanges();
+                    var termid = (from q in IRDBE.Terms where q.term1 == kvp.Key select q).First<Term>();
+                    IRDBE.Dics.Add(new Dic() { termID = termid.Id, docID = id, freq = kvp.Value, weight = 0});
                 }
+                IRDBE.SaveChanges();
+            }
+        }
+
+        void processQuery(string q)
+        {
+            LinkedList<string> qlist = new LinkedList<string>();
+            qlist.AddFirst(q);
+            Stemming2 s = new Stemming2();
+            LinkedList<string> stemmedQ= s.porter2(qlist);
+            foreach(string word in stemmedQ)
+            {
+
             }
         }
     }

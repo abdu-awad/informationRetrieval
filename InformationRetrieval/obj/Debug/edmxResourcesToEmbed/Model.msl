@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="IRDBModelStoreContainer" CdmEntityContainer="IRDBEntities">
+    <EntitySetMapping Name="Dics">
+      <EntityTypeMapping TypeName="IRDBModel.Dic">
+        <MappingFragment StoreEntitySet="Dic">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="termID" ColumnName="termID" />
+          <ScalarProperty Name="docID" ColumnName="docID" />
+          <ScalarProperty Name="freq" ColumnName="freq" />
+          <ScalarProperty Name="weight" ColumnName="weight" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Docs">
+      <EntityTypeMapping TypeName="IRDBModel.Doc">
+        <MappingFragment StoreEntitySet="Docs">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Terms">
+      <EntityTypeMapping TypeName="IRDBModel.Term">
+        <MappingFragment StoreEntitySet="Terms">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="term1" ColumnName="term" />
+          <ScalarProperty Name="DocNum" ColumnName="DocNum" />
+          <ScalarProperty Name="totFreq" ColumnName="totFreq" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
