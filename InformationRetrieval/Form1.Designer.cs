@@ -35,7 +35,7 @@
             this.Search = new System.Windows.Forms.Button();
             this.delete_files_button = new System.Windows.Forms.Button();
             this.Clear_index_button = new System.Windows.Forms.Button();
-            this.resultTextBox = new System.Windows.Forms.TextBox();
+            this.resultBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // addFiles_button
@@ -55,7 +55,7 @@
             // textBox1
             // 
             this.textBox1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.textBox1.Location = new System.Drawing.Point(271, 95);
+            this.textBox1.Location = new System.Drawing.Point(271, 12);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(344, 20);
             this.textBox1.TabIndex = 1;
@@ -75,7 +75,7 @@
             // 
             // Search
             // 
-            this.Search.Location = new System.Drawing.Point(368, 128);
+            this.Search.Location = new System.Drawing.Point(370, 51);
             this.Search.Name = "Search";
             this.Search.Size = new System.Drawing.Size(154, 30);
             this.Search.TabIndex = 2;
@@ -102,22 +102,23 @@
             this.Clear_index_button.Text = "Clear Index";
             this.Clear_index_button.UseVisualStyleBackColor = true;
             // 
-            // resultTextBox
+            // resultBox
             // 
-            this.resultTextBox.Location = new System.Drawing.Point(281, 184);
-            this.resultTextBox.Multiline = true;
-            this.resultTextBox.Name = "resultTextBox";
-            this.resultTextBox.ReadOnly = true;
-            this.resultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.resultTextBox.Size = new System.Drawing.Size(333, 185);
-            this.resultTextBox.TabIndex = 3;
+            this.resultBox.BackColor = System.Drawing.Color.White;
+            this.resultBox.Location = new System.Drawing.Point(254, 98);
+            this.resultBox.Name = "resultBox";
+            this.resultBox.ReadOnly = true;
+            this.resultBox.Size = new System.Drawing.Size(386, 254);
+            this.resultBox.TabIndex = 8;
+            this.resultBox.Text = "";
+            this.resultBox.TextChanged += new System.EventHandler(this.resultBox_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(662, 373);
-            this.Controls.Add(this.resultTextBox);
+            this.Controls.Add(this.resultBox);
             this.Controls.Add(this.Clear_index_button);
             this.Controls.Add(this.delete_files_button);
             this.Controls.Add(this.Search);
@@ -140,7 +141,7 @@
         private System.Windows.Forms.Button Search;
         private System.Windows.Forms.Button delete_files_button;
         private System.Windows.Forms.Button Clear_index_button;
-        private System.Windows.Forms.TextBox resultTextBox;
+        private System.Windows.Forms.RichTextBox resultBox;
     }
 }
 
