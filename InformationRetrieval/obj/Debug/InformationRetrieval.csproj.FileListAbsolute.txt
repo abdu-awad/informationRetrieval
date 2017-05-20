@@ -13,19 +13,10 @@ C:\Users\abdua\documents\visual studio 2015\Projects\InformationRetrieval\Inform
 C:\Users\abdua\documents\visual studio 2015\Projects\InformationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.xml
 C:\Users\abdua\documents\visual studio 2015\Projects\InformationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\InformationRetrieval.exe.config
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.exe
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.pdb
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\InformationRetrieval.exe
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\InformationRetrieval.pdb
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.dll
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.SqlServer.dll
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.xml
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.SqlServer.xml
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.csprojResolveAssemblyReference.cache
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.Form1.resources
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.Properties.Resources.resources
-C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.csproj.GenerateResource.Cache
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.dll
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.SqlServer.dll
@@ -39,6 +30,9 @@ C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Collections.Immutable.dll
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Diagnostics.DiagnosticSource.dll
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Interactive.Async.dll
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.xml
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.Relational.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\Microsoft.EntityFrameworkCore.SqlServer.xml
@@ -52,3 +46,9 @@ C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Collections.Immutable.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Diagnostics.DiagnosticSource.xml
 C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\bin\Debug\System.Interactive.Async.xml
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.Form1.resources
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.Properties.Resources.resources
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.csproj.GenerateResource.Cache
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.exe
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.pdb
+C:\Users\abdua\Source\Repos\informationRetrieval\InformationRetrieval\obj\Debug\InformationRetrieval.csprojResolveAssemblyReference.cache

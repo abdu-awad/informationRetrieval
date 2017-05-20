@@ -8,7 +8,7 @@
     <Property Name="termID" Type="Int32" />
     <Property Name="docID" Type="Int32" />
     <Property Name="freq" Type="Int32" />
-    <Property Name="weight" Type="Int32" />
+    <Property Name="weight" Type="Double" />
     <NavigationProperty Name="Doc" Relationship="Self.FK__Dic__docID__286302EC" FromRole="Dic" ToRole="Docs" />
     <NavigationProperty Name="Term" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Dic" ToRole="Terms" />
   </EntityType>

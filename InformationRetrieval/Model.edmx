@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="IRDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="IRDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Dic">
           <Key>
             <PropertyRef Name="Id" />
@@ -13,7 +13,7 @@
           <Property Name="termID" Type="int" />
           <Property Name="docID" Type="int" />
           <Property Name="freq" Type="int" />
-          <Property Name="weight" Type="int" />
+          <Property Name="weight" Type="float" />
         </EntityType>
         <EntityType Name="Docs">
           <Key>
@@ -68,8 +68,7 @@
             <End Role="Dic" EntitySet="Dic" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="IRDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -81,7 +80,7 @@
           <Property Name="termID" Type="Int32" />
           <Property Name="docID" Type="Int32" />
           <Property Name="freq" Type="Int32" />
-          <Property Name="weight" Type="Int32" />
+          <Property Name="weight" Type="Double" />
           <NavigationProperty Name="Doc" Relationship="Self.FK__Dic__docID__286302EC" FromRole="Dic" ToRole="Docs" />
           <NavigationProperty Name="Term" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Dic" ToRole="Terms" />
         </EntityType>
