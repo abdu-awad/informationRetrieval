@@ -8,7 +8,7 @@
     <Property Name="termID" Type="int" />
     <Property Name="docID" Type="int" />
     <Property Name="freq" Type="int" />
-    <Property Name="weight" Type="int" />
+    <Property Name="weight" Type="float" />
   </EntityType>
   <EntityType Name="Docs">
     <Key>

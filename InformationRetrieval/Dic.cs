@@ -18,7 +18,7 @@ namespace InformationRetrieval
         public Nullable<int> termID { get; set; }
         public Nullable<int> docID { get; set; }
         public Nullable<int> freq { get; set; }
-        public Nullable<int> weight { get; set; }
+        public Nullable<double> weight { get; set; }
     
         public virtual Doc Doc { get; set; }
         public virtual Term Term { get; set; }
