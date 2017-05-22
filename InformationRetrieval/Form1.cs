@@ -19,14 +19,29 @@ namespace InformationRetrieval
 
             addFiles_dialog.Multiselect = true;
             addFiles_dialog.Filter = "text files (*.txt)|*.txt|word files (*.doc,*.docx)|*.doc,*.docx|All files (*.*)|*.*";
-            buildVector();
+            foreach(var elem in IRDBE.Docs)
+            {
+                docName.Add(elem.Id, elem.name);
+            }
+            foreach(var elem in IRDBE.Terms)
+            {
+                termName.Add(elem.Id, elem.term1);
+            }
+            IRDBE.Configuration.AutoDetectChangesEnabled = false;
+            IRDBE.Configuration.ValidateOnSaveEnabled = false;
+            //buildVector();
         }
 
         
         string target = System.IO.Directory.GetCurrentDirectory() + "\\Docs";
         IRDBEntities IRDBE = new IRDBEntities();
-        Dictionary<string, int> words = new Dictionary<string, int>();
+        Dictionary<string, int> words = new Dictionary<string, int>();        
+        Dictionary<int, string> termName = new Dictionary<int, string>();
+        Dictionary<int, string> docName = new Dictionary<int, string>();
         Dictionary<int, Dictionary<int, int>> docList = new Dictionary<int, Dictionary<int, int>>();
+        Dictionary<int, Dictionary<int, int>> termList = new Dictionary<int, Dictionary<int, int>>();
+
+
 
 
         private void addFiles_button_Click(object sender, EventArgs e)
@@ -41,19 +56,48 @@ namespace InformationRetrieval
                 }
                 foreach (string s in addFiles_dialog.FileNames)
                 {
-                    string fileName = System.IO.Path.GetFileName(s);
-                    var result = (from q in IRDBE.Docs where q.name == fileName select q).FirstOrDefault<Doc>();
-
-                    if (result == null)
+                    if (s.Contains(".ALL"))
                     {
-                        System.IO.File.Copy(s, target + "\\" + System.IO.Path.GetFileName(s), true);
-                        IRDBE.Docs.Add(new Doc() { name = System.IO.Path.GetFileName(s) });
-                        IRDBE.SaveChanges();
+                        allToTxt(s);
+                        foreach (string file in System.IO.Directory.GetFiles(target))
+                        {
+                            string fileName = System.IO.Path.GetFileName(file);
+                            if (docName.ContainsValue(fileName))
+                            {
+                                MessageBox.Show("document already exists");
+                            }
+                            else
+                            {
+                                docName.Add(docName.Count + 1, fileName);
+                            }
+                        }                            
                     }
                     else
-                        MessageBox.Show("document already exists");
-
+                    {
+                        string fileName = System.IO.Path.GetFileName(s);
+                        if (docName.ContainsValue(fileName))
+                        {
+                            MessageBox.Show("document already exists");
+                        }
+                        else
+                        {
+                            docName.Add(docName.Count + 1, fileName);
+                            System.IO.File.Copy(s, target + "\\" + System.IO.Path.GetFileName(s), true);
+                        }                        
+                    }
                 }
+                //using (IRDBEntities IRDBE = new IRDBEntities())
+                //{
+                //    foreach (var doc in docName)
+                //    {
+                //        IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Docs] ON");
+                //        IRDBE.Docs.Add(new Doc() { name = doc.Value });
+                //    }
+                    
+                //    IRDBE.SaveChanges();
+                //    IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Docs] OFF");
+                //    IRDBE.Dispose();
+                //}
                 MessageBox.Show("Done Adding!");
             }
         }        
@@ -78,11 +122,22 @@ namespace InformationRetrieval
 
         private void delete_files_button_Click(object sender, EventArgs e)
         {
-            IRDBE.Dics.RemoveRange(IRDBE.Dics);
-            IRDBE.Terms.RemoveRange(IRDBE.Terms);
-            IRDBE.Docs.RemoveRange(IRDBE.Docs);
-            IRDBE.SaveChanges();
-            foreach(string file in System.IO.Directory.GetFiles(target))
+            using (IRDBEntities IRDBE = new IRDBEntities())
+            {
+                IRDBE.Database.ExecuteSqlCommand("TRUNCATE table Dic");
+                IRDBE.Database.ExecuteSqlCommand("Alter table Dic drop constraint FK_doc");
+                IRDBE.Database.ExecuteSqlCommand("TRUNCATE table Docs");
+                IRDBE.Database.ExecuteSqlCommand("Alter table Dic drop constraint FK_term");
+                IRDBE.Database.ExecuteSqlCommand("TRUNCATE table Terms");
+                IRDBE.Database.ExecuteSqlCommand("Alter table Dic add constraint FK_term FOREIGN KEY ([termID]) REFERENCES [dbo].[Terms] ([Id])");
+                IRDBE.Database.ExecuteSqlCommand("Alter table Dic add constraint FK_doc FOREIGN KEY ([docID]) REFERENCES [dbo].[Docs] ([Id])");
+                IRDBE.SaveChanges();
+            }            
+            termList.Clear();
+            termName.Clear();
+            docName.Clear();
+            docList.Clear();
+            foreach (string file in System.IO.Directory.GetFiles(target))
             {
                 System.IO.File.Delete(file);
             }
@@ -103,37 +158,30 @@ namespace InformationRetrieval
             }
             else
             {
-                IRDBE.Dics.RemoveRange(IRDBE.Dics);
+                IRDBE.Database.ExecuteSqlCommand("TRUNCATE table Dic");
+                IRDBE.SaveChanges();
                 foreach (string file in System.IO.Directory.GetFiles(target))
                 {
                     string fileName = System.IO.Path.GetFileName(file);
-                    words.Clear();
-                    var document = (from q in IRDBE.Docs where q.name == fileName select q).FirstOrDefault();
+                    words.Clear();                    
                     System.IO.StreamReader sr = new System.IO.StreamReader(file);
                     LinkedList<string> beforeStem = new LinkedList<string>(Stopwords.RemoveStopwords(sr.ReadToEnd()));
                     Stemming2 s = new Stemming2();
                     LinkedList<string> w = s.porter2(beforeStem);
                     while (w.First != null)
                     {
-                        try
-                        {
-                            words.Add(w.First.Value, 1);
 
-                        }
-                        catch (Exception)
-                        {
-                            int max = 1;
-                            words.TryGetValue(w.First.Value, out max);
-                            words.Remove(w.First.Value);
-                            words.Add(w.First.Value, max + 1);
-                        }
+                        if (words.ContainsKey(w.First.Value))                        
+                            words[w.First.Value]++;                        
+                        else                        
+                            words.Add(w.First.Value, 1);
+                                                
                         w.RemoveFirst();
-                    }
-                    addTerms(words, Convert.ToInt32(document.Id));
+                    }                    
+                    addTerms(words, docName.FirstOrDefault(x => x.Value == fileName).Key);
                 }
             }
-
-            buildVector();
+            addToDB();           
             TF_IDF.addTF();
 
             MessageBox.Show("ok");
@@ -142,44 +190,65 @@ namespace InformationRetrieval
 
         void addTerms(Dictionary<string, int> words, int id)
         {
-            foreach (KeyValuePair<string, int> kvp in words)
+            docList.Add(id, new Dictionary<int, int>());
+            foreach(KeyValuePair<string,int> kvp in words)
             {
-                var term = (from q in IRDBE.Terms where q.term1 == kvp.Key select q).FirstOrDefault();
-
-                if (term != null)
+                if (termName.ContainsValue(kvp.Key))
                 {
-                    term.DocNum++;
-                    term.totFreq += kvp.Value;
-                    IRDBE.Dics.Add(new Dic() { termID = term.Id, docID = id, freq = kvp.Value, weight = 0 });
+                    int termID = termName.FirstOrDefault(x => x.Value == kvp.Key).Key;
+                    termList[termID].Add(id, kvp.Value);
+                    docList[id].Add(termID, kvp.Value);
                 }
                 else
                 {
-                    IRDBE.Terms.Add(new Term() { term1 = kvp.Key, DocNum = 1, totFreq = kvp.Value });
-                    IRDBE.SaveChanges();
-                    var termid = (from q in IRDBE.Terms where q.term1 == kvp.Key select q).First<Term>();
-                    IRDBE.Dics.Add(new Dic() { termID = termid.Id, docID = id, freq = kvp.Value, weight = 0 });
+                    termName.Add(termName.Count + 1, kvp.Key.ToString());
+                    termList.Add(termName.Count, new Dictionary<int, int>());
+                    termList[termName.Count].Add(id, kvp.Value);
+                    docList[id].Add(termName.Count, kvp.Value);
+                }
+            }
+        }
+
+        void addToDB()
+        {
+            using (IRDBE = new IRDBEntities())
+            {
+                IRDBE.Configuration.AutoDetectChangesEnabled = false;
+                IRDBE.Configuration.ValidateOnSaveEnabled = false;
+                IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Terms] ON");
+                IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Dic] ON");
+                int count = 0;
+                foreach (var doc in docName)
+                {
+                    IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Docs] ON");
+                    IRDBE.Docs.Add(new Doc() { Id = doc.Key, name = doc.Value });
+                    count++;
                 }
                 IRDBE.SaveChanges();
-            }
-        }
-
-        void buildVector()
-        {
-            docList.Clear();
-            var dl = (from d in IRDBE.Docs select d.Id).ToList<int>();
-            foreach(int doc_id in dl)
-            {
-                Dictionary<int, int> docVector = new Dictionary<int, int>();
-                var dicList = (from di in IRDBE.Dics where di.docID == doc_id select di).ToList<Dic>();                
-                foreach(Dic dicItem in dicList)
+                foreach (var t in termName)
                 {
-                    docVector.Add(Convert.ToInt32(dicItem.termID), Convert.ToInt32(dicItem.freq));
+                    var listOfDocs = new Dictionary<int, int>();
+                    termList.TryGetValue(t.Key, out listOfDocs);
+                    IRDBE.Terms.Add(new Term() { Id = t.Key, term1 = t.Value, DocNum = listOfDocs.Count, totFreq = listOfDocs.Values.Sum() });
+                    foreach (var elem in listOfDocs)
+                    {
+                        IRDBE.Dics.Add(new Dic() { Id = count, termID = t.Key, docID = elem.Key, freq = elem.Value });
+                        count++;
+                        if (count % 1000 == 0)
+                        {
+                            IRDBE.SaveChanges();
+                            IRDBE.Dispose();
+                            IRDBE = new IRDBEntities();
+                            IRDBE.Configuration.AutoDetectChangesEnabled = false;
+                            IRDBE.Configuration.ValidateOnSaveEnabled = false;
+                            IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Terms] ON");
+                            IRDBE.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Dic] ON");
+                        }
+                    }
                 }
-                docList.Add(doc_id, docVector);                
             }
         }
-      
-
+               
         void processQuery_method(string q)
         {
             LinkedList<string> qlist = new LinkedList<string>(Stopwords.RemoveStopwords(q));
@@ -242,6 +311,38 @@ namespace InformationRetrieval
         {
             System.Diagnostics.Process.Start("notepad.txt", target + "\\" + e.Link);
         }
-        
+
+        void allToTxt(string file)
+        {
+            System.IO.StreamReader sr = new System.IO.StreamReader(file);
+            string all = sr.ReadToEnd();            
+            var txts = all.Split(new char[] { '*' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string content in txts)
+            {
+                string cont = content.Replace("TEXT ", " ");
+                int i = 1;
+                string name = "";
+                if (cont[0] != 'S')
+                {
+                    while (cont[i] != ' ')
+                    {
+                        name += cont[i];
+                        i++;
+                    }
+                    System.IO.StreamWriter sw = new System.IO.StreamWriter(target + "\\" + name + ".txt");
+                    sw.Write(cont);
+                    sw.Flush();
+                    sw.Dispose();
+                }                
+            }
+        }
+
+        private void Clear_index_button_Click(object sender, EventArgs e)
+        {
+            IRDBE.Database.ExecuteSqlCommand("TRUNCATE table Dic");
+            termList.Clear();
+            termName.Clear();
+            IRDBE.SaveChanges();
+        }
     }
 }

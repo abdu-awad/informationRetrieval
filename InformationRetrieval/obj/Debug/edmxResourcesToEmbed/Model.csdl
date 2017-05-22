@@ -25,7 +25,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="term1" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="term1" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="DocNum" Type="Int32" />
     <Property Name="totFreq" Type="Int32" />
     <NavigationProperty Name="Dics" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Terms" ToRole="Dic" />

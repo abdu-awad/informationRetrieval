@@ -59,7 +59,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(344, 20);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "enter your search here";            
+            this.textBox1.Text = "enter your search here";
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // index_button
@@ -100,6 +100,7 @@
             this.Clear_index_button.TabIndex = 7;
             this.Clear_index_button.Text = "Clear Index";
             this.Clear_index_button.UseVisualStyleBackColor = true;
+            this.Clear_index_button.Click += new System.EventHandler(this.Clear_index_button_Click);
             // 
             // resultBox
             // 
