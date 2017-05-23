@@ -511,10 +511,10 @@ namespace InformationRetrieval
             Stemming2 s = new Stemming2();
             foreach( string currentword  in words)
             {
-                s.add(convertstringtochar(currentword), currentword.Length);
+                s.add(convertstringtochar(currentword.ToLower()), currentword.Length);
 
                 s.stem();
-                stemmed.AddFirst(s.ToString());
+                stemmed.AddFirst(s.ToString().ToLower());
             }
             return stemmed;
 
