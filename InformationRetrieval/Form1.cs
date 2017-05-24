@@ -18,7 +18,13 @@ namespace InformationRetrieval
         public Form1()
         {
             InitializeComponent();
-
+            // intialise process            
+            pProcess.StartInfo.FileName = "cmd.exe";
+            pProcess.StartInfo.CreateNoWindow = true;
+            pProcess.StartInfo.RedirectStandardInput = true;
+            pProcess.StartInfo.RedirectStandardOutput = true;
+            pProcess.StartInfo.UseShellExecute = false;            
+            
             addFiles_dialog.Multiselect = true;
             addFiles_dialog.Filter = "text files (*.txt)|*.txt|word files (*.doc,*.docx)|*.doc,*.docx|All files (*.*)|*.*";
             foreach(var elem in IRDBE.Docs)
@@ -27,7 +33,7 @@ namespace InformationRetrieval
             }
             foreach(var elem in IRDBE.Terms)
             {
-                termName.Add(elem.Id, elem.term1);
+                termName.Add(elem.Id, elem.term1);                
             }
             foreach(var doc in docName)
             {
@@ -64,7 +70,8 @@ namespace InformationRetrieval
         Dictionary<int, Dictionary<int, int>> docList = new Dictionary<int, Dictionary<int, int>>();
         Dictionary<int, Dictionary<int, int>> termList = new Dictionary<int, Dictionary<int, int>>();
         Dictionary<string, double> weight = new Dictionary<string, double>();
-
+        Process pProcess = new Process();
+        List<LinkLabel> allLinks = new List<LinkLabel>();
 
 
 
@@ -269,6 +276,14 @@ namespace InformationRetrieval
             LinkedList<string> stemmedQ = s.porter2(qlist);
             List<int> qeueDocs = new List<int>();
             Dictionary<int, int> queryVec = new Dictionary<int, int>();
+            while (allLinks.Any())
+            {
+                allLinks.First().Dispose();
+                allLinks.Remove(allLinks.First());
+            }
+            resultBox.Clear();
+            TFBox.Clear();
+            sumBox.Clear();
             foreach (string word in stemmedQ)
             {                
                 if (termName.ContainsValue(word))
@@ -288,66 +303,105 @@ namespace InformationRetrieval
                     voca.Add(termID, vocID);
                 }
             }
-            resultBox.Text = "Your search result is :" + System.Environment.NewLine+ System.Environment.NewLine;
-
-            foreach (var d in qeueDocs)
-            {
-                var clickable = new LinkLabel();
-                clickable.Text = docName[d];
-                clickable.ActiveLinkColor = System.Drawing.Color.Chartreuse;
-                clickable.AutoSize = true;
-                clickable.Enabled = true;
-                clickable.LinkArea= new LinkArea(0, docName[d].Length);
-                //clickable.LinkArea.Length = d.name.Length;
-                clickable.LinkClicked += clicked;
-                resultBox.Text += clickable.Text + System.Environment.NewLine;
-            }
-
-            resultBox.Text += System.Environment.NewLine + "search result is Done."+ System.Environment.NewLine ;
+           
             List<KeyValuePair<int, double>> result = new List<KeyValuePair<int, double>>();
             result = processQuery.cosinetheta_forAllDocs(queryVec, docList);
             int j = 0;
             List<int> docweight = new List<int>();
             Dictionary<int, double> cos = new Dictionary<int, double>();
-            
-            resultBox.Text += result.Last().Key + "top 10 with COSINE : " + System.Environment.NewLine;
-            while (result.Any())
+            Dictionary<int, double> tfi = new Dictionary<int, double>();
+
+            resultBox.Text += "top 20 with COSINE Value : " + System.Environment.NewLine + System.Environment.NewLine;
+            while ((result.Any())&&(j<20))
             {
                 if (result.Last().Value == 0)
                     break;
-                resultBox.Text += result.Last().Key + "   " + result.Last().Value + System.Environment.NewLine;
+                LinkLabel link = new LinkLabel();
+                link.Text = docName[result.Last().Key];
+                link.LinkColor = System.Drawing.Color.DarkGray;
+                link.LinkClicked += new LinkLabelLinkClickedEventHandler(link_LinkClicked);
+                LinkLabel.Link data = new LinkLabel.Link();
+                data.LinkData = result.Last().Key;
+                link.Links.Add(data);
+                link.AutoSize = true;
+                link.Location = resultBox.GetPositionFromCharIndex(this.resultBox.TextLength);
+                allLinks.Add(link);
+                resultBox.Controls.Add(link);
+                resultBox.AppendText(link.Text + "   ");
+                resultBox.SelectionStart = this.resultBox.TextLength;
+                resultBox.Text += "\t ==> \t" + result.Last().Value.ToString("f5") + System.Environment.NewLine;
                 docweight.Add(result.Last().Key);
                 cos.Add(result.Last().Key, result.Last().Value);
                 result.Remove(result.Last());
-                
+                j++;
             }
-            resultBox.Text += System.Environment.NewLine + "TF-IDF : " + System.Environment.NewLine;
+            
+            // ============== TF-IDF            
             foreach(var docid in docweight)
             {
                 double tf=0;
                 foreach(var t in voca)
-                {
+                {   
                     if (weight.ContainsKey(t.Key + "-" + docid))
-                        tf += weight[t.Key + "-" + docid];
-                    resultBox.Text += docid + " : TF : " + tf + System.Environment.NewLine;
+                        tf += weight[t.Key + "-" + docid];                    
                     foreach (var v in voca[t.Key])
-                    {
-                        if (weight.ContainsKey(v + "-" + docid))
-                            tf += weight[t.Key + "-" + docid]/2;
-                    }
+                        if (weight.ContainsKey(t.Key + "-" + docid))
+                            tf += weight[t.Key + "-" + docid]/2;                    
                 }
                 cos[docid] += tf;
-               
+                tfi.Add(docid, tf);               
             }
-            resultBox.Text += System.Environment.NewLine+ " the sum is  " + System.Environment.NewLine;
+            var sortedTF = tfi.ToList();
+            sortedTF.Sort((x, y) => x.Value.CompareTo(y.Value));
+            sortedTF.Reverse();
+            TFBox.Text += "Doc name \t TF-IDF Value" + System.Environment.NewLine;
+            foreach(var elem in sortedTF)
+            {
+                TFBox.Text += System.Environment.NewLine + elem.Key + "\t ==> \t" + elem.Value.ToString("f5");
+                TFBox.Text += System.Environment.NewLine + "contains : ";
+                foreach (var t in voca)
+                {                    
+                    if (weight.ContainsKey(t.Key + "-" + elem.Key))
+                        TFBox.Text += t.Key + "\t" + weight[t.Key + "-" + elem.Key].ToString("f5") + System.Environment.NewLine;                    
+                }
+            }            
+            sumBox.Text += "Doc Name \t ranking(sum) " + System.Environment.NewLine + System.Environment.NewLine;            
             var sum = cos.ToList();
             sum.Sort((x, y) => x.Value.CompareTo(y.Value));
+            sum.Reverse();
             foreach(var elem in sum)
             {
-                resultBox.Text += elem.Key + "  ==>  " + elem.Value + System.Environment.NewLine;
+                LinkLabel link = new LinkLabel();
+                link.Text = elem.Key.ToString();
+                link.LinkClicked += new LinkLabelLinkClickedEventHandler(link_LinkClicked);
+                LinkLabel.Link data = new LinkLabel.Link();
+                data.LinkData = docName[elem.Key];
+                link.Links.Add(data);
+                link.AutoSize = true;
+                link.Location = sumBox.GetPositionFromCharIndex(this.sumBox.TextLength);
+                allLinks.Add(link);
+                sumBox.Controls.Add(link);
+                sumBox.AppendText(link.Text + "   ");
+                sumBox.SelectionStart = this.sumBox.TextLength;
+
+                sumBox.Text += "\t ==> \t" + elem.Value.ToString("f5") + System.Environment.NewLine;
             }
+            
+            
         }
 
+        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {            
+            pProcess.Start();
+
+            pProcess.StandardInput.WriteLine("cd "+target);
+            pProcess.StandardInput.Flush();
+            string filename = e.Link.LinkData.ToString();            
+            pProcess.StandardInput.WriteLine(filename);
+            pProcess.StandardInput.Flush();
+            pProcess.StandardInput.Close();
+            pProcess.WaitForExit();
+        }
 
         public LinkedList<String> get_senses(string newsubstring)
         {
@@ -401,7 +455,7 @@ namespace InformationRetrieval
 
             // spliting the vocabularies
             string strOutput = pProcess.StandardOutput.ReadToEnd();
-            MessageBox.Show(strOutput);
+            //MessageBox.Show(strOutput);
             LinkedList<String> all_senses = get_senses(strOutput);
             return all_senses;                           
         }
@@ -442,6 +496,26 @@ namespace InformationRetrieval
             termList.Clear();
             termName.Clear();
             IRDBE.SaveChanges();
+        }
+
+        private void resultBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            textBox1.SelectAll();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }

@@ -18,7 +18,7 @@ namespace InformationRetrieval
                 {
                     weight.Add(t.Key + "-" + d.Key, 0);
                     double TF = (double)d.Value / docList[d.Key].Count;
-                    double IDF = Math.Log((double)docName.Count / t.Value.Count);
+                    double IDF = Math.Log((double)docName.Count / t.Value.Count,2.0);
                     weight[t.Key + "-" + d.Key] = TF * IDF;
                 }
             }
