@@ -27,11 +27,11 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="term" Type="varchar" MaxLength="25" Nullable="false" />
+          <Property Name="term" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="DocNum" Type="int" />
           <Property Name="totFreq" Type="int" />
         </EntityType>
-        <Association Name="FK__Dic__docID__286302EC">
+        <Association Name="FK_doc">
           <End Role="Docs" Type="Self.Docs" Multiplicity="0..1" />
           <End Role="Dic" Type="Self.Dic" Multiplicity="*" />
           <ReferentialConstraint>
@@ -43,7 +43,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Dic__termID__276EDEB3">
+        <Association Name="FK_term">
           <End Role="Terms" Type="Self.Terms" Multiplicity="0..1" />
           <End Role="Dic" Type="Self.Dic" Multiplicity="*" />
           <ReferentialConstraint>
@@ -59,11 +59,11 @@
           <EntitySet Name="Dic" EntityType="Self.Dic" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Docs" EntityType="Self.Docs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Terms" EntityType="Self.Terms" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Dic__docID__286302EC" Association="Self.FK__Dic__docID__286302EC">
+          <AssociationSet Name="FK_doc" Association="Self.FK_doc">
             <End Role="Docs" EntitySet="Docs" />
             <End Role="Dic" EntitySet="Dic" />
           </AssociationSet>
-          <AssociationSet Name="FK__Dic__termID__276EDEB3" Association="Self.FK__Dic__termID__276EDEB3">
+          <AssociationSet Name="FK_term" Association="Self.FK_term">
             <End Role="Terms" EntitySet="Terms" />
             <End Role="Dic" EntitySet="Dic" />
           </AssociationSet>
@@ -97,7 +97,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="term1" Type="String" MaxLength="25" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="term1" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="DocNum" Type="Int32" />
           <Property Name="totFreq" Type="Int32" />
           <NavigationProperty Name="Dics" Relationship="Self.FK__Dic__termID__276EDEB3" FromRole="Terms" ToRole="Dic" />
